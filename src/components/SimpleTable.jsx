@@ -1,55 +1,115 @@
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
 import data from '../MOCK_DATA.json'
+import { useState } from "react";
+import dayjs from "dayjs";
+import {
+    useReactTable,
+    getCoreRowModel,
+    flexRender,
+    getPaginationRowModel,
+    getSortedRowModel,
+    getFilteredRowModel
 
-function SimpleTable() {
+
+} from "@tanstack/react-table";
 
 
 
+const SimpleTable = () => {
+
+
+    //const data = useMemo(() => mdata, []);
 
     const columns = [
         {
             header: "ID",
-            accesorKey: "id",
+            accessorKey: "id",
+
         },
         {
             header: "NAME",
-            accesorKey: "name",
+            accessorKey: "name",
+            footer: "NAME",
         },
         {
             header: "LAST NAME",
-            accesorKey: "lastname",
+            accessorKey: "lastname",
+            footer: "LAST NAME",
         },
         {
             header: "EMAIL",
-            accesorKey: "email",
+            accessorKey: "email",
+            footer: "EMAIL",
         },
         {
             header: "COUNTRY",
-            accesorKey: "country",
+            accessorKey: "country",
+            footer: "COUNTRY",
         },
         {
             header: "DATE OF BIRTH",
-            accesorKey: "dateOfBirth",
+            accessorKey: "dateOfBirth",
+            footer: "DATE OF BIRTH",
+            cell: info => dayjs(info.getValue()).format('YYYY/MM/DD HH:mm:ss'),
         },
     ]
 
-    const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
+    const [sorting, setSorting] = useState([]);
+    const [filtering, setFiltering] = useState("");
+
+    const table = useReactTable({
+        data: data,
+        columns: columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+
+        state: {
+            sorting,
+            globalFilter: filtering
+        },
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setFiltering,
+
+    });
 
     return (
         <div>
+            <input
+                type="text"
+                value={filtering}
+                onChange={(e) => setFiltering(e.target.value)}
+            />
             <table>
                 <thead>
                     {
-                        table.getHeaderGroups().map(headerGroup => (
+                        table.getHeaderGroups().map((headerGroup) => (
                             <tr key={headerGroup.id}>
 
                                 {headerGroup.headers.map(header => (
-                                    <th key={header.id}>
-                                        { flexRender(header.column.columnDef.header, header.getContext())}
+                                    <th key={header.id}
+                                        onClick={header.column.getToggleSortingHandler()}
+                                    >
+                                        {header.isPlaceholder ? null : (
+                                            <div>
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    { asc: '⬆️', desc: '⬇️' }[
+                                                    header.column.getIsSorted() ?? null
+                                                    ]
+                                                }
+                                            </div>
+                                        )}
+
                                     </th>
                                 ))}
                             </tr>
-                        ))}
+                        )
+                        )
+                    }
                 </thead>
                 <tbody>
 
@@ -57,9 +117,29 @@ function SimpleTable() {
                         table.getRowModel().rows.map((row) => (
                             <tr key={row.id}>
                                 {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id}> 
-                                            { flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
+                                    <td key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))
+                                }
+
+                            </tr>
+                        ))
+                    }
+
+
+                </tbody>
+                <tfoot>
+                    {
+                        table.getFooterGroups().map(footerGroup => (
+                            <tr key={footerGroup.id}>
+                                {
+                                    footerGroup.headers.map((footer) => (
+                                        <th key={footer.id}>
+                                            {
+                                                flexRender(footer.column.columnDef.footer, footer.getContext())
+                                            }
+                                        </th>
                                     ))
                                 }
 
@@ -67,20 +147,21 @@ function SimpleTable() {
                         ))
                     }
                     <tr>
-                        <td>1</td>
-
-                    </tr>
-
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td>ID</td>
+                        <td></td>
 
                     </tr>
                 </tfoot>
             </table>
+            <button onClick={() => { table.setPageIndex(0) }}>Primer Página</button>
+            <button onClick={() => { table.previousPage() }}>Anterior</button>
+            <button onClick={() => { table.nextPage() }}>Posterior</button>
+            <button onClick={() => { table.setPageIndex(table.getPageCount() - 1) }}>
+                Última Página
+            </button>
         </div>
     )
 }
+
+
 
 export default SimpleTable
