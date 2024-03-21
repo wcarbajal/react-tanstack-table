@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
     useReactTable,
     flexRender,
     getCoreRowModel,
+    getSortedRowModel,
 
 } from '@tanstack/react-table'
 import dataJSON from './DATA.json'
@@ -13,10 +14,21 @@ export const SortingTable = () => {
     const finalData = useMemo(() => dataJSON, [])
     const finalColumnDef = useMemo(() => columnDef, [])
 
+    const [sorting, setSorting] = useState([]);
+
     const tableInstance = useReactTable({
         columns: finalColumnDef,
         data: finalData,
+
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+
+        state: {
+            sorting: sorting,
+
+        },
+
+        onSortingChange: setSorting,
 
 
     })
@@ -28,7 +40,10 @@ export const SortingTable = () => {
                     <tr key={headerEl.id}>
                         {
                             headerEl.headers.map(columEl => (
-                                <th key={columEl.id} colSpan={columEl.colSpan}
+                                <th
+                                    key={columEl.id}
+                                    colSpan={columEl.colSpan}
+                                    onClick={columEl.column.getToggleSortingHandler()}
 
                                 >
                                     {columEl.isPlaceholder
@@ -37,6 +52,10 @@ export const SortingTable = () => {
                                             columEl.column.columnDef.header,
                                             columEl.getContext()
                                         )}
+                                    {/* Codigo para Up y Down */}
+                                    {
+                                        { asc: " ⬆️", desc: "⬇️" }[columEl.column.getIsSorted() ?? null]
+                                    }
                                 </th>
                             ))}
                     </tr>

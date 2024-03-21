@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table"
+import moment from "moment";
 
 const columnHelper = createColumnHelper()
 
@@ -12,12 +13,19 @@ export const columnDef = [
     {
         accessorKey: "last_name",
         header: 'LAST NAME',
+
     },
     columnHelper.accessor('email', { header: 'EMAIL' }),
     columnHelper.accessor('gender', { header: 'GENDER' }),
     columnHelper.accessor('ip_address', { header: 'IP ADDRESS' }),
     columnHelper.accessor('phone', { header: 'PHONE' }),
-    columnHelper.accessor('date', { header: 'DATE' }),
+    columnHelper.accessor('date', { header: 'DATE', cell: value => moment(new Date(value.getValue())).format('ll') }),
+    {
+        accessorKey: "date",
+        header: 'Date DE VALUE',
+
+
+    },
 
 ];
 

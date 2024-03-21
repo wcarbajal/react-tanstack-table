@@ -1,4 +1,5 @@
 import data from '../MOCK_DATA.json'
+
 import { useState } from "react";
 import dayjs from "dayjs";
 import {
@@ -24,7 +25,7 @@ const SimpleTable = () => {
             header: "ID",
             accessorKey: "id",
             footer: "ID",
-            
+
 
         },
         {
@@ -57,7 +58,7 @@ const SimpleTable = () => {
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
-    const [columnOrder, setColumnOrder] = useState(['id','name', 'lastname', 'email', 'country', 'dateOfBirth']);
+    const [columnOrder, setColumnOrder] = useState(['id', 'name', 'lastname', 'email', 'country', 'dateOfBirth']);
     const [columnVisibility, setColumnVisibility] = useState({
         id: true,
         name: true,
@@ -65,8 +66,8 @@ const SimpleTable = () => {
         email: true,
         country: true,
         dateOfBirth: true,
-      });
-    
+    });
+
 
     const table = useReactTable({
         data: data,
@@ -84,19 +85,21 @@ const SimpleTable = () => {
             globalFilter: filtering,
             columnOrder,
             columnVisibility,
-            
-            
+
+
         },
         onSortingChange: setSorting,
         onGlobalFilterChange: setFiltering,
         onColumnOrderChange: setColumnOrder,
         onColumnVisibilityChange: setColumnVisibility,
-        
+
 
     });
     console.log(table.getState().columnFilters)
     return (
+
         <div>
+
             <input
                 type="text"
                 value={filtering}
@@ -114,15 +117,24 @@ const SimpleTable = () => {
                                     >
                                         {header.isPlaceholder ? null : (
                                             <div>
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                                {
-                                                    { asc: '⬆️', desc: '⬇️' }[
-                                                    header.column.getIsSorted() ?? null
-                                                    ]
-                                                }
+                                                <div>
+                                                    {
+                                                        { asc: '⬆️', desc: '⬇️' }[
+                                                        header.column.getIsSorted() ?? null
+                                                        ]
+                                                    }
+                                                </div>
+                                                <div>
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                                </div>
+
+
+
+
+
                                             </div>
                                         )}
 
@@ -151,7 +163,7 @@ const SimpleTable = () => {
 
 
                 </tbody>
-               
+
             </table>
             <button onClick={() => { table.setPageIndex(0) }}>Primer Página</button>
             <button onClick={() => { table.previousPage() }}>Anterior</button>

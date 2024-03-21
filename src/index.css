@@ -11,14 +11,20 @@ table {
 }
 
 thead, tfoot, th {
-    background-color: #333;
-    color: white;
+    background-color: #afc;
+    color: black;
 }
 th, td {
     text-align: left;
     padding: 16px;
+
 }
+
 tr:nth-child(even) {
     background-color: #f2f2f2
 
+}
+th:hover {
+    cursor: pointer;
+    text-decoration-line: underline;
 }
