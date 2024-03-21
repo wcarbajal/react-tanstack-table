@@ -17,14 +17,12 @@ import {
 const SimpleTable = () => {
 
 
-    //const [data, setData] = useState([])
+    //const data = useMemo(() => mdata, []);
 
     const columns = [
         {
             header: "ID",
             accessorKey: "id",
-            footer: "ID",
-            
 
         },
         {
@@ -57,16 +55,6 @@ const SimpleTable = () => {
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
-    const [columnOrder, setColumnOrder] = useState(['id','name', 'lastname', 'email', 'country', 'dateOfBirth']);
-    const [columnVisibility, setColumnVisibility] = useState({
-        id: true,
-        name: true,
-        lastname: true,
-        email: true,
-        country: true,
-        dateOfBirth: true,
-      });
-    
 
     const table = useReactTable({
         data: data,
@@ -76,25 +64,15 @@ const SimpleTable = () => {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
 
-        /* initialState: {
-            
-        }, */
         state: {
             sorting,
-            globalFilter: filtering,
-            columnOrder,
-            columnVisibility,
-            
-            
+            globalFilter: filtering
         },
         onSortingChange: setSorting,
         onGlobalFilterChange: setFiltering,
-        onColumnOrderChange: setColumnOrder,
-        onColumnVisibilityChange: setColumnVisibility,
-        
 
     });
-    console.log(table.getState().columnFilters)
+
     return (
         <div>
             <input
@@ -151,7 +129,28 @@ const SimpleTable = () => {
 
 
                 </tbody>
-               
+                <tfoot>
+                    {
+                        table.getFooterGroups().map(footerGroup => (
+                            <tr key={footerGroup.id}>
+                                {
+                                    footerGroup.headers.map((footer) => (
+                                        <th key={footer.id}>
+                                            {
+                                                flexRender(footer.column.columnDef.footer, footer.getContext())
+                                            }
+                                        </th>
+                                    ))
+                                }
+
+                            </tr>
+                        ))
+                    }
+                    <tr>
+                        <td></td>
+
+                    </tr>
+                </tfoot>
             </table>
             <button onClick={() => { table.setPageIndex(0) }}>Primer Página</button>
             <button onClick={() => { table.previousPage() }}>Anterior</button>

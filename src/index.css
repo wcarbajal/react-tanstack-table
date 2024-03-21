@@ -10,7 +10,7 @@ table {
 
 }
 
-thead, tfoot {
+thead, tfoot, th {
     background-color: #333;
     color: white;
 }
